@@ -48,13 +48,15 @@ int main(int argc, char **argv)
   int baud_rate;
   std::string frame_id;
   int firmware_number;
- 
-  std_msgs::UInt16 rpms; 
 
-  priv_nh.param("port", port, std::string("/dev/ttyUSB0"));
+  std_msgs::UInt16 rpms;
+
+  // priv_nh.param("port", port, std::string("/dev/ttyUSB0"));
+  n.getParam("port", port);
   priv_nh.param("baud_rate", baud_rate, 115200);
   priv_nh.param("frame_id", frame_id, std::string("neato_laser"));
-  priv_nh.param("firmware_version", firmware_number, 1);
+  // priv_nh.param("firmware_version", firmware_number, 1);
+  n.getParam("firmware_version", firmware_number);
 
   boost::asio::io_service io;
 
