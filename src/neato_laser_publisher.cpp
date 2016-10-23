@@ -62,8 +62,8 @@ int main(int argc, char **argv)
 
   try {
     xv_11_laser_driver::XV11Laser laser(port, baud_rate, firmware_number, io);
-    ros::Publisher laser_pub = n.advertise<sensor_msgs::LaserScan>("xv/scan", 1000);
-    ros::Publisher motor_pub = n.advertise<std_msgs::UInt16>("xv/rpms",1000);
+    ros::Publisher laser_pub = n.advertise<sensor_msgs::LaserScan>("scan", 1000);
+    ros::Publisher motor_pub = n.advertise<std_msgs::UInt16>("lidar_rpm",1000);
 
     while (ros::ok()) {
       sensor_msgs::LaserScan::Ptr scan(new sensor_msgs::LaserScan);
