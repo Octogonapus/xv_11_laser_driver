@@ -51,8 +51,8 @@ int main(int argc, char **argv)
 
   std_msgs::UInt16 rpms;
 
-  // priv_nh.param("port", port, std::string("/dev/ttyUSB0"));
-  n.getParam("port", port);
+   priv_nh.param("port", port, std::string("/dev/ttyUSB0"));
+  //n.getParam("port", port);
   priv_nh.param("baud_rate", baud_rate, 115200);
   priv_nh.param("frame_id", frame_id, std::string("neato_laser"));
   boost::asio::io_service io;
