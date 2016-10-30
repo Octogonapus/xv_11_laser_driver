@@ -51,17 +51,14 @@ int main(int argc, char **argv)
 
   std_msgs::UInt16 rpms;
 
-  // priv_nh.param("port", port, std::string("/dev/ttyUSB0"));
-  n.getParam("port", port);
+   priv_nh.param("port", port, std::string("/dev/ttyUSB0"));
+  //n.getParam("port", port);
   priv_nh.param("baud_rate", baud_rate, 115200);
   priv_nh.param("frame_id", frame_id, std::string("neato_laser"));
-  // priv_nh.param("firmware_version", firmware_number, 1);
-  n.getParam("firmware_version", firmware_number);
-
   boost::asio::io_service io;
 
   try {
-    xv_11_laser_driver::XV11Laser laser(port, baud_rate, firmware_number, io);
+    xv_11_laser_driver::XV11Laser laser(port, baud_rate, io);
     ros::Publisher laser_pub = n.advertise<sensor_msgs::LaserScan>("scan", 1000);
     ros::Publisher motor_pub = n.advertise<std_msgs::UInt16>("lidar_rpm",1000);
 
