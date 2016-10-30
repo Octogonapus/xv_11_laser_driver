@@ -56,7 +56,7 @@ namespace xv_11_laser_driver {
 				continue;//next point
 			}
 			range = (uint16_t)(0x3f&raw_bytes[dataStartIndex+1]) <<8 + raw_bytes[dataStartIndex];
-			intensity=(uint16_t)raw_bytes[dataStartIndex + 3]) <<8 + raw_bytes[dataStartIndex + 2]
+			intensity = ((uint16_t)raw_bytes[dataStartIndex + 3]) <<8 + raw_bytes[dataStartIndex + 2];
 			scan->ranges[firstIndex+i] = range / 1000.0;
 			scan->intensities[firstIndex+i] = intensity;
 		}
