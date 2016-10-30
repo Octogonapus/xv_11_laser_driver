@@ -32,6 +32,8 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
+#include <iostream>
+
 #include <xv_11_laser_driver/xv11_laser.h>
 
 namespace xv_11_laser_driver {
@@ -43,9 +45,9 @@ namespace xv_11_laser_driver {
 	int XV11Laser::read_Packet(sensor_msgs::LaserScan::Ptr scan, uint8_t packetID){//returns rpm
 		boost::array<uint8_t, 20> raw_bytes;
 		boost::asio::read(serial_, boost::asio::buffer(&raw_bytes[0],20));
-		uint16_t firstIndex = 4*(packetID -0xA0);
+		uint16_t firstIndex = 4*(packetID - 160);
 		//reads data remaining in packet
-		
+
 		uint8_t dataStartIndex;
 		uint16_t range;
 		uint16_t intensity;
@@ -60,8 +62,8 @@ namespace xv_11_laser_driver {
 			scan->ranges[firstIndex+i] = range / 1000.0;
 			scan->intensities[firstIndex+i] = intensity;
 		}
-		return ((uint16_t)raw_bytes[0]) <<8 + raw_bytes[1]; 
-	}
+		return ((uint16_t)raw_bytes[0]) <<8 + raw_bytes[1];
+}
 	void XV11Laser::poll(sensor_msgs::LaserScan::Ptr scan) {
 		// Wait until first data sync of frame: 0xFA, 0xA0
 		boost::array<uint8_t, 1> byte; 
@@ -78,15 +80,19 @@ namespace xv_11_laser_driver {
 		scan->intensities.resize(360);
 
 		//every scan except first scan use the saved packetID for the first packet of each scan
-		if(lastPacketID != 255){
+		if(lastPacketID != 0){
 			sum_motor_speed += read_Packet(scan,lastPacketID);
 			good_packets ++;
 		}
 		while(true){
-			do{	
+			do{
 				boost::asio::read(serial_, boost::asio::buffer(&byte[0],1));
 			}while(byte[0]!=0xFA);
+
 			boost::asio::read(serial_, boost::asio::buffer(&byte[0],1));
+			if (byte[0] < 160 || byte[0] > 249)
+				continue;
+
 			//read start and count byte
 			if(byte[0] < lastPacketID) //if new scan was detected 
 				break;
@@ -98,7 +104,9 @@ namespace xv_11_laser_driver {
 		rpms = average_RPM;
 		scan->time_increment = 1/(6 * average_RPM);
 		lastPacketID = byte[0];//save packetID for next scan
+		
 	}
+
 };
 
 
