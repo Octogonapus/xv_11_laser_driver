@@ -34,13 +34,18 @@
 
 #include <iostream>
 
-#include <xv_11_laser_driver/xv11_laser.h>
+#include "xv_11_laser_driver/xv11_laser.h"
 
-namespace xv_11_laser_driver {
-	XV11Laser::XV11Laser(const std::string& port, uint32_t baud_rate, boost::asio::io_service& io): port_(port),
-	baud_rate_(baud_rate), shutting_down_(false), serial_(io, port_) {
+namespace xv_11_laser_driver
+{
+	XV11Laser::XV11Laser(const std::string& port, uint32_t baud_rate, boost::asio::io_service& io):
+	port_(port),
+	baud_rate_(baud_rate),
+	shutting_down_(false),
+	serial_(io, port_)
+{
 		serial_.set_option(boost::asio::serial_port_base::baud_rate(baud_rate_));
-		lastPacketID = 0;// set ID to impossible value to trigger first scan behavior
+		lastPacketID = 0; // set ID to impossible value to trigger first scan behavior
 	}
 
 	int XV11Laser::read_Packet(sensor_msgs::LaserScan::Ptr scan, uint8_t packetID)
@@ -67,7 +72,8 @@ namespace xv_11_laser_driver {
 		}
 
 		return (((uint16_t)raw_bytes[1]) << 8) + raw_bytes[0];
-}
+	}
+
 	void XV11Laser::poll(sensor_msgs::LaserScan::Ptr scan)
 	{
 		boost::array<uint8_t, 1> byte;
