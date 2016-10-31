@@ -47,7 +47,6 @@ int main(int argc, char **argv)
   std::string port;
   int baud_rate;
   std::string frame_id;
-  int firmware_number;
 
   std_msgs::UInt16 rpms;
 
@@ -70,7 +69,6 @@ int main(int argc, char **argv)
       rpms.data=laser.rpms;
       laser_pub.publish(scan);
       motor_pub.publish(rpms);
-
     }
     laser.close();
     return 0;
