@@ -54,8 +54,13 @@
   */
   ~XV11Laser() {};
 
-
-  int read_Packet(sensor_msgs::LaserScan::Ptr scan, uint8_t count);
+  /**
+   * Reads one packet of data
+   * @param  scan  Scan to save packet into
+   * @param  count Packet ID
+   * @return       Lidar RPM
+   */
+  int read_Packet(sensor_msgs::LaserScan::Ptr scan, uint8_t packetID);
 
   /**
   * @brief Poll the laser to get a new scan. Blocks until a complete new scan is received or close is called.
