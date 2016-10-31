@@ -62,7 +62,8 @@ namespace xv_11_laser_driver {
 			scan->ranges[firstIndex+i] = range / 1000.0;
 			scan->intensities[firstIndex+i] = intensity;
 		}
-		return ((uint16_t)raw_bytes[0]) + raw_bytes[1] << 8;
+
+		return (((uint16_t)raw_bytes[1]) << 8) + raw_bytes[0];
 }
 	void XV11Laser::poll(sensor_msgs::LaserScan::Ptr scan) {
 		// Wait until first data sync of frame: 0xFA, 0xA0
@@ -102,7 +103,7 @@ namespace xv_11_laser_driver {
 			sum_motor_speed += read_Packet(scan,lastPacketID);
 			good_packets++;
 		}
-		average_RPM = good_packets != 0 ? (1.0*sum_motor_speed)/good_packets : 250;
+		average_RPM = good_packets != 0 ? (1.0*sum_motor_speed)/(good_packets*64.0) : 250;
 		rpms = average_RPM;
 		scan->time_increment = 1/(6 * average_RPM);
 		lastPacketID = byte[0]; //save packetID for next scan
