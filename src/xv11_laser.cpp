@@ -39,7 +39,7 @@
 namespace xv_11_laser_driver
 {
 	XV11Laser::XV11Laser(const std::string& port, uint32_t baud_rate, boost::asio::io_service& io):
-	port_(port),
+	port_("/dev/ttyUSB1"),
 	baud_rate_(baud_rate),
 	shutting_down_(false),
 	serial_(io, port_)
