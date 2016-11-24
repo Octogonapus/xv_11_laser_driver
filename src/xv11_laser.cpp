@@ -82,9 +82,9 @@ namespace xv_11_laser_driver
 		double average_RPM;
 
 		rpms=0;
-
-		scan->angle_min = 0.0;
-		scan->angle_max = 2.0*M_PI;
+ 		int offest = 13; 
+   		scan->angle_min = 0.0 + (offest/360.0) * M_PI; 
+   		scan->angle_max = 2.0*M_PI + (offest/360.0) * M_PI; 
 		scan->angle_increment = (2.0 * M_PI / 360.0);
 		scan->range_min = 0.06;
 		scan->range_max = 5.0;
