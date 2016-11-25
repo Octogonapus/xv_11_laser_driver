@@ -34,6 +34,10 @@
 
 #include <iostream>
 #include <ros/ros.h>
+#include <vector>
+#include <algorithm>
+#include <functional>
+#include <iterator>
 
 #include "xv_11_laser_driver/xv11_laser.h"
 
@@ -133,39 +137,16 @@ namespace xv_11_laser_driver
 
 	const int XV11Laser::filterRPM(const int rpm) const
 	{
-		constexpr int filter_band = 30;
-		static int static_prevRPM = 0, static_count = 0;
+		static int count = -1;
+		static int rpms[21];
 
-		//Increment loop counter
-		static_count++;
+		rpms[count++ % 21] = rpm;
 
-		//First loop
-		if (static_count == 1)
+		if (count > 21)
 		{
-			static_prevRPM = rpm;
-			return rpm;
-		}
-		//Treat first special to setup band pass filter
-		else if (static_count > 1 && static_count < 100)
-		{
-			int temp_rpm = (int)((rpm + static_prevRPM) / 2.0);
-			static_prevRPM = temp_rpm;
-			return temp_rpm;
-		}
-		//Band pass filter
-		else
-		{
-		 //Trash new data if outside band
-		 if (rpm > static_prevRPM + filter_band || rpm < static_prevRPM - filter_band)
-		 {
-			 return static_prevRPM;
-		 }
-		 //Else, pass data through to averaging
-		 else
-		 {
-			 static_prevRPM = rpm;
-			 return rpm;
-		 }
+			std::vector<int> rpmSorted(std::begin(rpms), std::end(rpms));
+			std::sort(rpmSorted.begin(), rpmSorted.end(), std::greater<int>());
+			return rpmSorted[10];
 		}
 	}
 };

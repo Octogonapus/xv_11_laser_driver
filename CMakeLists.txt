@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(xv_11_laser_driver)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++14 -O3")
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -71,7 +73,7 @@ include_directories(include
 
 ## Declare a cpp executable
 # add_executable(xv_11_laser_driver_node src/xv_11_laser_driver_node.cpp)
-add_executable(neato_laser_publisher 
+add_executable(neato_laser_publisher
 	src/neato_laser_publisher.cpp
 	src/xv11_laser.cpp
 )
@@ -138,4 +140,3 @@ install(DIRECTORY include/${PROJECT_NAME}/
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-
