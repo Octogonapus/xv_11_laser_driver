@@ -33,6 +33,7 @@
 *********************************************************************/
 
 #include <iostream>
+#include <ros/ros.h>
 
 #include "xv_11_laser_driver/xv11_laser.h"
 
@@ -81,6 +82,9 @@ namespace xv_11_laser_driver
 		uint32_t sum_motor_speed = 0;
 		double average_RPM;
 
+		//filter data
+		static int static_prevRPM = 0, static_count = 0;
+
 		rpms=0;
  		int offest =13; 
    		scan->angle_min = 0.0 + (offest/180.0) * M_PI; 
@@ -95,7 +99,20 @@ namespace xv_11_laser_driver
 		// of each scan
 		if(lastPacketID != 0)
 		{
-			sum_motor_speed += read_Packet(scan,lastPacketID);
+			int tempRPM = read_Packet(scan, lastPacketID);
+			static_count++;
+			if (static_count == 1)
+			{ static_prevRPM = tempRPM; }
+			else if (static_count > 1 && static_count < 100)
+			{ tempRPM = (int)((tempRPM + static_prevRPM) / 2.0); static_prevRPM = tempRPM; }
+			else
+			{
+			 if (tempRPM > static_prevRPM + 30 || tempRPM < static_prevRPM - 30)
+			 { tempRPM = static_prevRPM; }
+			 else
+			 { static_prevRPM = tempRPM; }
+			}
+			sum_motor_speed += tempRPM;
 			good_packets++;
 		}
 
@@ -119,7 +136,21 @@ namespace xv_11_laser_driver
 			}
 
 			lastPacketID = byte[0];
-			sum_motor_speed += read_Packet(scan, lastPacketID);
+			int tempRPM = read_Packet(scan, lastPacketID);
+			if (static_count++ == 1)
+			{ static_prevRPM = tempRPM; }
+			else if (static_count > 1 && static_count < 100)
+			{ tempRPM = (int)((tempRPM + static_prevRPM) / 2.0); static_prevRPM = tempRPM; }
+			else
+			{
+			 //band pass filter
+			 if (tempRPM > static_prevRPM + 30 || tempRPM < static_prevRPM - 30)
+			 { tempRPM = static_prevRPM; }
+			 else
+			 { static_prevRPM = tempRPM; }
+			}
+			ROS_INFO("%d,%1.2f", static_count++, tempRPM / 64.0);
+			sum_motor_speed += tempRPM;
 			good_packets++;
 		}
 
