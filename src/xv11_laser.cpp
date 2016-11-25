@@ -142,25 +142,29 @@ namespace xv_11_laser_driver
 		//First loop
 		if (static_count == 1)
 		{
-			static_prevRPM = tempRPM;
+			static_prevRPM = rpm;
+			return rpm;
 		}
 		//Treat first special to setup band pass filter
 		else if (static_count > 1 && static_count < 100)
 		{
-			tempRPM = (int)((tempRPM + static_prevRPM) / 2.0); static_prevRPM = tempRPM;
+			int temp_rpm = (int)((rpm + static_prevRPM) / 2.0);
+			static_prevRPM = temp_rpm;
+			return temp_rpm;
 		}
 		//Band pass filter
 		else
 		{
-			//Trash new data if outside band
-		 if (tempRPM > static_prevRPM + filter_band || tempRPM < static_prevRPM - filter_band)
+		 //Trash new data if outside band
+		 if (rpm > static_prevRPM + filter_band || rpm < static_prevRPM - filter_band)
 		 {
-			 tempRPM = static_prevRPM;
+			 return static_prevRPM;
 		 }
 		 //Else, pass data through to averaging
 		 else
 		 {
-			 static_prevRPM = tempRPM;
+			 static_prevRPM = rpm;
+			 return rpm;
 		 }
 		}
 	}
