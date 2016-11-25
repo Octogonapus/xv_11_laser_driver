@@ -84,5 +84,7 @@ uint16_t motor_speed_; ///< @brief current motor speed as reported by the XV11.
 
 uint8_t lastPacketID;//initial state
 
+const int filterRPM(const int rpm) const;
+
 };
 };

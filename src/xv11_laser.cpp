@@ -82,13 +82,10 @@ namespace xv_11_laser_driver
 		uint32_t sum_motor_speed = 0;
 		double average_RPM;
 
-		//filter data
-		static int static_prevRPM = 0, static_count = 0;
-
 		rpms=0;
- 		int offest =13; 
-   		scan->angle_min = 0.0 + (offest/180.0) * M_PI; 
-   		scan->angle_max = 2.0*M_PI + (offest/180.0) * M_PI; 
+ 		int offest =13;
+   		scan->angle_min = 0.0 + (offest/180.0) * M_PI;
+   		scan->angle_max = 2.0*M_PI + (offest/180.0) * M_PI;
 		scan->angle_increment = (2.0 * M_PI / 360.0);
 		scan->range_min = 0.06;
 		scan->range_max = 5.0;
@@ -99,20 +96,7 @@ namespace xv_11_laser_driver
 		// of each scan
 		if(lastPacketID != 0)
 		{
-			int tempRPM = read_Packet(scan, lastPacketID);
-			static_count++;
-			if (static_count == 1)
-			{ static_prevRPM = tempRPM; }
-			else if (static_count > 1 && static_count < 100)
-			{ tempRPM = (int)((tempRPM + static_prevRPM) / 2.0); static_prevRPM = tempRPM; }
-			else
-			{
-			 if (tempRPM > static_prevRPM + 30 || tempRPM < static_prevRPM - 30)
-			 { tempRPM = static_prevRPM; }
-			 else
-			 { static_prevRPM = tempRPM; }
-			}
-			sum_motor_speed += tempRPM;
+			sum_motor_speed += filterRPM(read_Packet(scan, lastPacketID));
 			good_packets++;
 		}
 
@@ -136,21 +120,7 @@ namespace xv_11_laser_driver
 			}
 
 			lastPacketID = byte[0];
-			int tempRPM = read_Packet(scan, lastPacketID);
-			if (static_count++ == 1)
-			{ static_prevRPM = tempRPM; }
-			else if (static_count > 1 && static_count < 100)
-			{ tempRPM = (int)((tempRPM + static_prevRPM) / 2.0); static_prevRPM = tempRPM; }
-			else
-			{
-			 //band pass filter
-			 if (tempRPM > static_prevRPM + 30 || tempRPM < static_prevRPM - 30)
-			 { tempRPM = static_prevRPM; }
-			 else
-			 { static_prevRPM = tempRPM; }
-			}
-			ROS_INFO("%d,%1.2f", static_count++, tempRPM / 64.0);
-			sum_motor_speed += tempRPM;
+			sum_motor_speed += filterRPM(read_Packet(scan, lastPacketID));
 			good_packets++;
 		}
 
@@ -159,5 +129,39 @@ namespace xv_11_laser_driver
 		rpms = average_RPM;
 		scan->time_increment = 1 / (6 * average_RPM);
 		lastPacketID = byte[0]; //save packetID for next scan
+	}
+
+	const int XV11Laser::filterRPM(const int rpm) const
+	{
+		constexpr int filter_band = 30;
+		static int static_prevRPM = 0, static_count = 0;
+
+		//Increment loop counter
+		static_count++;
+
+		//First loop
+		if (static_count == 1)
+		{
+			static_prevRPM = tempRPM;
+		}
+		//Treat first special to setup band pass filter
+		else if (static_count > 1 && static_count < 100)
+		{
+			tempRPM = (int)((tempRPM + static_prevRPM) / 2.0); static_prevRPM = tempRPM;
+		}
+		//Band pass filter
+		else
+		{
+			//Trash new data if outside band
+		 if (tempRPM > static_prevRPM + filter_band || tempRPM < static_prevRPM - filter_band)
+		 {
+			 tempRPM = static_prevRPM;
+		 }
+		 //Else, pass data through to averaging
+		 else
+		 {
+			 static_prevRPM = tempRPM;
+		 }
+		}
 	}
 };
