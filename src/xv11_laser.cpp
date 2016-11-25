@@ -137,16 +137,18 @@ namespace xv_11_laser_driver
 
 	const int XV11Laser::filterRPM(const int rpm) const
 	{
+		constexpr int len = 51;
+		constexpr int medianElement = (int)((len + 0.5) / 2.0);
 		static int count = -1;
-		static int rpms[21];
+		static int rpms[len];
 
-		rpms[count++ % 21] = rpm;
+		rpms[count++ % len] = rpm;
 
-		if (count > 21)
+		if (count > len)
 		{
 			std::vector<int> rpmSorted(std::begin(rpms), std::end(rpms));
 			std::sort(rpmSorted.begin(), rpmSorted.end(), std::greater<int>());
-			return rpmSorted[10];
+			return rpmSorted[medianElement];
 		}
 	}
 };
