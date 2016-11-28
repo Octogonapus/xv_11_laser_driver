@@ -112,6 +112,7 @@ namespace xv_11_laser_driver
 				ROS_INFO("saw a point");
 			} while(byte[0] != 0xFA);
 			ROS_INFO("saw a scan");
+			std::cout << "packet ID" << byte[0] << std::endl;
 			boost::asio::read(serial_, boost::asio::buffer(&byte[0], 1));
 			if (byte[0] < 160 || byte[0] > 249) //160 = 0xA0, 249 = 0xF9
 			{
