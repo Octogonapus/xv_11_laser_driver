@@ -110,7 +110,7 @@ namespace xv_11_laser_driver
 			{
 				boost::asio::read(serial_, boost::asio::buffer(&byte[0], 1));
 			} while(byte[0] != 0xFA);
-			std::cout << "packet ID" << byte[0] << std::endl;
+
 			boost::asio::read(serial_, boost::asio::buffer(&byte[0], 1));
 			if (byte[0] < 160 || byte[0] > 249) //160 = 0xA0, 249 = 0xF9
 			{
