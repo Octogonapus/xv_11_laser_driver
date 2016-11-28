@@ -103,14 +103,15 @@ namespace xv_11_laser_driver
 			sum_motor_speed += filterRPM(read_Packet(scan, lastPacketID));
 			good_packets++;
 		}
-
+		ROS_INFO("began scan");
 		while(true)
 		{
 			do
 			{
 				boost::asio::read(serial_, boost::asio::buffer(&byte[0], 1));
+				ROS_INFO("saw a point");
 			} while(byte[0] != 0xFA);
-
+			ROS_INFO("saw a scan");
 			boost::asio::read(serial_, boost::asio::buffer(&byte[0], 1));
 			if (byte[0] < 160 || byte[0] > 249) //160 = 0xA0, 249 = 0xF9
 			{
