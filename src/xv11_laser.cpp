@@ -44,7 +44,8 @@
 namespace xv_11_laser_driver
 {
 	XV11Laser::XV11Laser(const std::string& port, uint32_t baud_rate, boost::asio::io_service& io):
-	port_("/dev/ttyUSB1"),
+	//port_("/dev/ttyUSB1"),
+	port_("/dev/lidarUSB"),
 	baud_rate_(baud_rate),
 	shutting_down_(false),
 	serial_(io, port_)
@@ -64,7 +65,8 @@ namespace xv_11_laser_driver
 		for(int i = 0; i < 4; i++)
 		{
 			dataStartIndex = 2 + 4 * i;
-
+			//std::cout <<"data  " << unsigned(raw_bytes[dataStartIndex])<< " " << unsigned(raw_bytes[dataStartIndex + 1]) << " " <<
+			//unsigned(raw_bytes[dataStartIndex + 2]) << " " << unsigned(raw_bytes[dataStartIndex +3]) << std::endl;
 			if(raw_bytes[dataStartIndex + 1] & 0x80)
 			{
 				continue; // Skip to next point
@@ -103,17 +105,17 @@ namespace xv_11_laser_driver
 			sum_motor_speed += filterRPM(read_Packet(scan, lastPacketID));
 			good_packets++;
 		}
-		ROS_INFO("began scan");
+		//ROS_INFO("began scan");
 		while(true)
 		{
 			do
 			{
 				boost::asio::read(serial_, boost::asio::buffer(&byte[0], 1));
-				ROS_INFO("saw a point");
+				//ROS_INFO("saw a point");
 			} while(byte[0] != 0xFA);
-			ROS_INFO("saw a scan");
-			std::cout << "packet ID" << byte[0] << std::endl;
+			//ROS_INFO("saw a scan");
 			boost::asio::read(serial_, boost::asio::buffer(&byte[0], 1));
+			//std::cout << "packet ID" <<unsigned(byte[0]) << std::endl;
 			if (byte[0] < 160 || byte[0] > 249) //160 = 0xA0, 249 = 0xF9
 			{
 				continue;
