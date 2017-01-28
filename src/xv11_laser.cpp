@@ -145,6 +145,7 @@ namespace xv_11_laser_driver
 		constexpr int medianElement = (int)((len + 0.5) / 2.0);
 		static int count = -1;
 		static int rpms[len];
+		static int lastRPM = 250;
 
 		rpms[count++ % len] = rpm;
 
@@ -152,9 +153,9 @@ namespace xv_11_laser_driver
 		{
 			std::vector<int> rpmSorted(std::begin(rpms), std::end(rpms));
 			std::sort(rpmSorted.begin(), rpmSorted.end(), std::greater<int>());
-			return rpmSorted[medianElement];
+			return lastRPM = rpmSorted[medianElement];
 		}
 
-		return rpm;
+		return lastRPM;
 	}
 };
