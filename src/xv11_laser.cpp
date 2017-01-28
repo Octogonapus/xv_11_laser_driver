@@ -1,5 +1,5 @@
 /*********************************************************************
- * Software License Agreement (BSD License)
+* Software License Agreement (BSD License)
 *
 *  Copyright (c) 2011, Eric Perko, Chad Rockey
 *  All rights reserved.
@@ -49,7 +49,7 @@ namespace xv_11_laser_driver
 	baud_rate_(baud_rate),
 	shutting_down_(false),
 	serial_(io, port_)
-{
+	{
 		serial_.set_option(boost::asio::serial_port_base::baud_rate(baud_rate_));
 		lastPacketID = 0; // set ID to impossible value to trigger first scan behavior
 	}
@@ -88,10 +88,10 @@ namespace xv_11_laser_driver
 		uint32_t sum_motor_speed = 0;
 		double average_RPM;
 
-		rpms=0;
- 		int offest =13;
-   		scan->angle_min = 0.0 + (offest/180.0) * M_PI;
-   		scan->angle_max = 2.0*M_PI + (offest/180.0) * M_PI;
+		rpms = 0;
+		constexpr int offset = 13;
+		scan->angle_min = 0.0 + (offset/180.0) * M_PI;
+		scan->angle_max = 2.0*M_PI + (offset/180.0) * M_PI;
 		scan->angle_increment = (2.0 * M_PI / 360.0);
 		scan->range_min = 0.06;
 		scan->range_max = 5.0;
@@ -141,7 +141,7 @@ namespace xv_11_laser_driver
 
 	const int XV11Laser::filterRPM(const int rpm) const
 	{
-		constexpr int len = 51;
+		constexpr int len = 51; //sample count
 		constexpr int medianElement = (int)((len + 0.5) / 2.0);
 		static int count = -1;
 		static int rpms[len];
