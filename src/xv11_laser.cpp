@@ -154,5 +154,7 @@ namespace xv_11_laser_driver
 			std::sort(rpmSorted.begin(), rpmSorted.end(), std::greater<int>());
 			return rpmSorted[medianElement];
 		}
+
+		return rpm;
 	}
 };
