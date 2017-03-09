@@ -56,7 +56,7 @@ namespace xv_11_laser_driver
     int XV11Laser::read_Packet(sensor_msgs::LaserScan::Ptr scan, const uint8_t packetID)
     {
         boost::array<uint8_t, 20> raw_bytes;
-        boost::asio::read(serial_, boost::asio::buffer(&raw_bytes[0], 20));
+        boost::asio::read(m_serial, boost::asio::buffer(&raw_bytes[0], 20));
 
         uint8_t dataStartIndex;
         uint16_t firstIndex = 4 * (packetID - 160), range, intensity;
@@ -95,9 +95,9 @@ namespace xv_11_laser_driver
         scan->intensities.resize(360);
 
         //every scan except first scan use the saved packetID for the first packet of each scan
-        if (lastPacketID != 0)
+        if (m_lastPacketID != 0)
         {
-            sum_motor_speed += filterRPM(read_Packet(scan, lastPacketID));
+            sum_motor_speed += filterRPM(read_Packet(scan, m_lastPacketID));
             good_packets++;
         }
 
@@ -105,10 +105,10 @@ namespace xv_11_laser_driver
         {
             do
             {
-                boost::asio::read(serial_, boost::asio::buffer(&byte[0], 1));
+                boost::asio::read(m_serial, boost::asio::buffer(&byte[0], 1));
             } while (byte[0] != 0xFA);
 
-            boost::asio::read(serial_, boost::asio::buffer(&byte[0], 1));
+            boost::asio::read(m_serial, boost::asio::buffer(&byte[0], 1));
 
             if (byte[0] < 160 || byte[0] > 249) //160 = 0xA0, 249 = 0xF9
                 continue;
@@ -126,7 +126,7 @@ namespace xv_11_laser_driver
         average_RPM = good_packets != 0 ? (1.0 * sum_motor_speed) / (good_packets * 64.0) : 250;
         rpms = average_RPM;
         scan->time_increment = 1 / (6 * average_RPM);
-        lastPacketID = byte[0]; //save packetID for next scan
+        m_lastPacketID = byte[0]; //save packetID for next scan
     }
 
     const int XV11Laser::filterRPM(const int rpm) const

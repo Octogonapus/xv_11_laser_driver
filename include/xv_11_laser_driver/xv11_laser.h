@@ -72,14 +72,14 @@ namespace xv_11_laser_driver
         /**
         * Close the driver down and prevent the polling loop from advancing
         */
-        inline void close() const
-        { m_shutting_down_ = true; };
+        inline void close()
+        { m_shutting_down = true; };
 
     private:
         std::string m_port; //Serial port the driver is connected to
         uint32_t m_baud_rate; //Baud rate for serial connection
 
-        bool m_shutting_down_; //Whether the driver should shut down
+        bool m_shutting_down; //Whether the driver should shut down
         boost::asio::serial_port m_serial; //Serial port object
         uint16_t m_motor_speed; //Motor RPM reported by the LIDAR unit
 
