@@ -40,40 +40,46 @@
 
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "neato_laser_publisher");
-  ros::NodeHandle n;
-  ros::NodeHandle priv_nh("~");
+    ros::init(argc, argv, "neato_laser_publisher");
+    ros::NodeHandle n;
 
-  std::string port;
-  int baud_rate;
-  std::string frame_id;
+    std::string port, frame_id, scanPub, lidarRPMPub;
+    int baud_rate;
 
-  std_msgs::UInt16 rpms;
+    std_msgs::UInt16 rpms;
 
-  priv_nh.param("port", port, std::string("/dev/lidarUSB"));
-  //n.getParam("port", port);
-  priv_nh.param("baud_rate", baud_rate, 115200);
-  priv_nh.param("frame_id", frame_id, std::string("neato_laser"));
-  boost::asio::io_service io;
+    n.getParam("port", port);
+    n.getParam("frame_id", frame_id);
+    n.getParam("scanPub", scanPub);
+    n.getParam("lidarRPMPub", lidarRPMPub);
+    n.getParam("baud_rate", baud_rate);
 
-  try {
-    xv_11_laser_driver::XV11Laser laser(port, baud_rate, io);
-    ros::Publisher laser_pub = n.advertise<sensor_msgs::LaserScan>("scan", 10);
-    ros::Publisher motor_pub = n.advertise<std_msgs::UInt16>("lidar_rpm", 10);
+    boost::asio::io_service io;
 
-    while (ros::ok()) {
-      sensor_msgs::LaserScan::Ptr scan(new sensor_msgs::LaserScan);
-      scan->header.frame_id = frame_id;
-      scan->header.stamp = ros::Time::now();
-      laser.poll(scan);
-      rpms.data=laser.rpms;
-      laser_pub.publish(scan);
-      motor_pub.publish(rpms);
+    try
+    {
+        xv_11_laser_driver::XV11Laser laser(port, baud_rate, io);
+        ros::Publisher laser_pub = n.advertise<sensor_msgs::LaserScan>(scanPub, 10);
+        ros::Publisher motor_pub = n.advertise<std_msgs::UInt16>(lidarRPMPub, 10);
+
+        while (ros::ok())
+        {
+            sensor_msgs::LaserScan::Ptr scan(new sensor_msgs::LaserScan);
+            scan->header.frame_id = frame_id;
+            scan->header.stamp = ros::Time::now();
+            laser.poll(scan);
+            rpms.data = laser.rpms;
+            laser_pub.publish(scan);
+            motor_pub.publish(rpms);
+        }
+        laser.close();
+        return 0;
     }
-    laser.close();
-    return 0;
-  } catch (boost::system::system_error ex) {
-    ROS_ERROR("Error instantiating laser object. Are you sure you have the correct port and baud rate? Error was %s", ex.what());
-    return -1;
-  }
+    catch (boost::system::system_error ex)
+    {
+        ROS_ERROR(
+                "Error instantiating laser object. Are you sure you have the correct port and baud rate? Error was %s",
+                ex.what());
+        return -1;
+    }
 }
