@@ -48,11 +48,11 @@ int main(int argc, char **argv)
 
   std_msgs::UInt16 rpms;
 
-  n.getParam("port", port);
-  n.getParam("frame_id", frame_id);
-  n.getParam("scan_topic_name", scanPub);
-  n.getParam("lidar_rpm_topic_name", lidarRPMPub);
-  n.getParam("baud_rate", baud_rate);
+  n.getParam("xv_11_laser_driver/port", port);
+  n.getParam("xv_11_laser_driver/frame_id", frame_id);
+  n.getParam("xv_11_laser_driver/scan_topic_name", scanPub);
+  n.getParam("xv_11_laser_driver/lidar_rpm_topic_name", lidarRPMPub);
+  n.getParam("xv_11_laser_driver/baud_rate", baud_rate);
 
   boost::asio::io_service io;
 
