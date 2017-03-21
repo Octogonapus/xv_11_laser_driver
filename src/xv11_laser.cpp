@@ -51,9 +51,6 @@ namespace xv_11_laser_driver
     {
         m_serial.set_option(boost::asio::serial_port_base::baud_rate(m_baud_rate));
         m_lastPacketID = 0; // set ID to impossible value to trigger first scan behavior
-
-        ros::NodeHandle n;
-        n.param<int>("xv_11_laser_driver/max_range", m_maxRange, 1.75);
     }
 
     int XV11Laser::read_Packet(sensor_msgs::LaserScan::Ptr scan, const uint8_t packetID)
@@ -90,9 +87,9 @@ namespace xv_11_laser_driver
         rpms = 0;
         scan->angle_increment = (2.0 * M_PI / 360.0);
         scan->range_min = 0.06;
-        scan->ranges.resize(4);
-        scan->intensities.resize(4);
-        scan->range_max = m_maxRange;
+        scan->range_max = 1.75;
+        scan->ranges.resize(360);
+        scan->intensities.resize(360);
 
         //every scan except first scan use the saved packetID for the first packet of each scan
         if (m_lastPacketID != 0)
