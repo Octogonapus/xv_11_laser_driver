@@ -84,7 +84,6 @@ namespace xv_11_laser_driver
         uint16_t m_motor_speed; //Motor RPM reported by the LIDAR unit
 
         uint8_t m_lastPacketID; //Initial state for packet ID
-
         /**
          * Filters RPM using a combination band pass filter
          * @param rpm Input RPM
