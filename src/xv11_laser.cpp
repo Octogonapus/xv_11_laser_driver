@@ -59,7 +59,7 @@ namespace xv_11_laser_driver
         boost::asio::read(m_serial, boost::asio::buffer(&raw_bytes[0], 20));
         
         const int offset = 13;
-        
+        ROS_INFO("XV: reading packet"); 
         uint16_t firstIndex = 4 * (packetID - 160), range, intensity;
         scan->angle_min = ((offset + firstIndex)/ 180.0) * M_PI;
         scan->angle_max = ((offset + firstIndex + 3) / 180.0) * M_PI;
@@ -72,10 +72,10 @@ namespace xv_11_laser_driver
 
             range = (((uint16_t)(0x3f & raw_bytes[dataStartIndex + 1])) << 8) + raw_bytes[dataStartIndex];
             intensity = (((uint16_t) raw_bytes[dataStartIndex + 3]) << 8) + raw_bytes[dataStartIndex + 2];
-            scan->ranges[firstIndex + i] = range / 1000.0;
-            scan->intensities[firstIndex + i] = intensity;
+            scan->ranges[i] = range / 1000.0;
+            scan->intensities[i] = intensity;
         }
-
+				ROS_INFO("XV: read packet"); 
         return (((uint16_t) raw_bytes[1]) << 8) + raw_bytes[0];
     }
 
@@ -96,12 +96,12 @@ namespace xv_11_laser_driver
         {
             average_RPM = filterRPM(read_Packet(scan, m_lastPacketID))/64.0;
         }
-        
+        ROS_INFO("XV: reading start"); 
         do
         {
             boost::asio::read(m_serial, boost::asio::buffer(&byte[0], 1));
         } while (byte[0] != 0xFA);
-
+				ROS_INFO("XV: reading count"); 
         boost::asio::read(m_serial, boost::asio::buffer(&byte[0], 1));          
         //Assume average rpm is 250 if we don't have any data
         rpms = average_RPM;
