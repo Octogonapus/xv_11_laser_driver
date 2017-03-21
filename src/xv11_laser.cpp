@@ -51,6 +51,9 @@ namespace xv_11_laser_driver
     {
         m_serial.set_option(boost::asio::serial_port_base::baud_rate(m_baud_rate));
         m_lastPacketID = 0; // set ID to impossible value to trigger first scan behavior
+
+        ros::NodeHandle n;
+        n.param<int>("xv_11_laser_driver/max_range", m_maxRange, 1.75);
     }
 
     int XV11Laser::read_Packet(sensor_msgs::LaserScan::Ptr scan, const uint8_t packetID)
@@ -90,7 +93,7 @@ namespace xv_11_laser_driver
         scan->angle_max = 2.0 * M_PI + (offset / 180.0) * M_PI;
         scan->angle_increment = (2.0 * M_PI / 360.0);
         scan->range_min = 0.06;
-        scan->range_max = 1.75;
+        scan->range_max = m_maxRange;
         scan->ranges.resize(360);
         scan->intensities.resize(360);
 

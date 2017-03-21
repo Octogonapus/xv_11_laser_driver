@@ -82,6 +82,7 @@ namespace xv_11_laser_driver
         bool m_shutting_down; //Whether the driver should shut down
         boost::asio::serial_port m_serial; //Serial port object
         uint16_t m_motor_speed; //Motor RPM reported by the LIDAR unit
+        int m_maxRange; //Max LIDAR range to be considered data
 
         uint8_t m_lastPacketID; //Initial state for packet ID
 
