@@ -82,7 +82,7 @@ namespace xv_11_laser_driver
     void XV11Laser::poll(sensor_msgs::LaserScan::Ptr scan)
     {
         boost::array<uint8_t, 1> byte;
-        double average_RPM;
+        int average_RPM;
 
         rpms = 0;
         scan->angle_increment = (2.0 * M_PI / 360.0);
