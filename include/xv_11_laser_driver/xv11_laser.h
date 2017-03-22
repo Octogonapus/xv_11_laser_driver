@@ -89,6 +89,6 @@ namespace xv_11_laser_driver
          * @param rpm Input RPM
          * @return    Filtered RPM
          */
-        const int filterRPM(const int rpm) const;
+        const int filterRPM(const int rpm, const int avgRPM) const;
     };
 };
