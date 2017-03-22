@@ -109,22 +109,19 @@ namespace xv_11_laser_driver
         m_lastPacketID = byte[0]; //save packetID for next scan
     }
 
-    const int XV11Laser::filterRPM(const int rpm) const
+    const int XV11Laser::filterRPM(const int rpm, const int avgRPM) const
     {
-        constexpr int len = 51; //sample count
-        constexpr int medianElement = (int) ((len + 0.5) / 2.0);
-        static int count = -1, lastRPM = 160000;
-        static int rpms[len];
+      constexpr int rpmBand = 30;
+      static int lastRPM = 16000;
 
-        rpms[count++ % len] = rpm;
-
-        if (count > len)
-        {
-            std::vector<int> rpmSorted(std::begin(rpms), std::end(rpms));
-            std::sort(rpmSorted.begin(), rpmSorted.end(), std::greater<int>());
-            return lastRPM = rpmSorted[medianElement];
-        }
-
+      if (rpm > avgRPM + rpmBand)
         return lastRPM;
+      else if (rpm < avgRPM - rpmBand)
+        return lastRPM;
+      else
+      {
+        lastRPM = rpm;
+        return rpm;
+      }
     }
 };
