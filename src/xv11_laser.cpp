@@ -114,9 +114,9 @@ namespace xv_11_laser_driver
       constexpr int rpmBand = 30;
       static int lastRPM = 16000;
 
-      if (rpm > avgRPM + rpmBand)
+      if (rpm > avgRPM * 64 + rpmBand)
         return lastRPM;
-      else if (rpm < avgRPM - rpmBand)
+      else if (rpm < avgRPM * 64 - rpmBand)
         return lastRPM;
       else
       {
