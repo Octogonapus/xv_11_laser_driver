@@ -60,7 +60,7 @@ int main(int argc, char **argv)
   {
     xv_11_laser_driver::XV11Laser laser(port, baud_rate, io);
     ros::Publisher laser_pub = n.advertise<sensor_msgs::LaserScan>(scanPub, 10);
-    ros::Publisher motor_pub = n.advertise<std_msgs::UInt16>(lidarRPMPub, 10);
+    ros::Publisher motor_pub = n.advertise<std_msgs::UInt16>(lidarRPMPub, 100);
 
     while (ros::ok())
     {
