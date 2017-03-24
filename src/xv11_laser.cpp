@@ -114,7 +114,7 @@ namespace xv_11_laser_driver
     {
         constexpr int len = 51; //sample count
         constexpr int medianElement = (int) ((len + 0.5) / 2.0);
-        static int count = -1, lastRPM = 250;
+        static int count = -1, lastRPM = 16000;
         static int rpms[len];
 
         rpms[count++ % len] = rpm;
