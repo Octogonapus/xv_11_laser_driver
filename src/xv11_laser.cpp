@@ -56,6 +56,7 @@ namespace xv_11_laser_driver
     int XV11Laser::read_Packet(sensor_msgs::LaserScan::Ptr scan, const uint8_t packetID)
     {
         boost::array<uint8_t, 20> raw_bytes;
+        scan->header.stamp = ros::Time::now();
         boost::asio::read(m_serial, boost::asio::buffer(&raw_bytes[0], 20));
 
         const int offset = 13;
