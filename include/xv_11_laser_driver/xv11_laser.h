@@ -72,8 +72,7 @@ namespace xv_11_laser_driver
         /**
         * Close the driver down and prevent the polling loop from advancing
         */
-        inline void close()
-        { m_shutting_down = true; };
+        void close() { m_shutting_down = true; };
 
     private:
         std::string m_port; //Serial port the driver is connected to
@@ -89,6 +88,6 @@ namespace xv_11_laser_driver
          * @param rpm Input RPM
          * @return    Filtered RPM
          */
-        const int filterRPM(const int rpm, const int avgRPM) const;
+        const int filterRPM(const int rpm) const;
     };
 };
